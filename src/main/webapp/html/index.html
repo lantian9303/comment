@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/resources/plugins/bootstrap/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/resources/login/css/index.css"/>
+    <link rel="stylesheet" href="/resources/plugins/easyui/themes/color.css"/>
+    <link rel="stylesheet" href="/resources/plugins/easyui/themes/icon.css"/>
+    <link rel="stylesheet" href="/resources/plugins/easyui/themes/mobile.css"/>
+    <link rel="stylesheet" href="/resources/plugins/easyui/themes/default/easyui.css"/>
+    <title></title>
+</head>
+<body>
+<div class="page-header head ">
+    log
+</div>
+<div class="container content">
+    <div class="col-lg-7 visible-lg col-sm-6 visible-sm visible-md">
+        <img src="/resources/login/img/index.png" class="img-responsive" alt=""/>
+    </div>
+    <div class="col-lg-4 col-sm-6">
+        <div class="form_con">
+            <form action="/comment/user/login" class="form-horizontal" id="login_form">
+                <h3 class="login_header">用户登录</h3>
+
+                <div class="input_con">
+                    <div class="input-group">
+                        <span class="input-group-addon">用户名</span>
+                        <input type="text" name="username" maxlength="20" required="required" class="form-control ">
+                    </div>
+                </div>
+                <div class="input_con">
+                    <div class="input-group">
+                        <span class="input-group-addon">密&nbsp;&nbsp;&nbsp;码</span>
+                        <input type="password" name="pwd" maxlength="20" required="required" class="form-control ">
+                    </div>
+                </div>
+                <div class="input_con register_forget">
+                    <span id="goto_registor">注册</span><span>忘记密码</span>
+                </div>
+                <div class="input_con">
+                    <input class="btn col-xs-12 btn-primary" id="loginBtn" type="submit" value="登录">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--<div class="footer">xx公司技术所有</div>-->
+<div class="register_con">
+    <div>
+        <form action="#" class="form-horizontal">
+            <h3 class="register_header">用户注册
+                <span class="glyphicon glyphicon-remove" id="close_registor"></span>
+            </h3>
+
+            <div class="input_con">
+                <div class="input-group">
+                    <span class="input-group-addon">工号</span>
+                    <input type="text" maxlength="20" required="required" class="form-control ">
+                </div>
+            </div>
+            <div class="input_con">
+                <div class="input-group">
+                    <span class="input-group-addon">姓名</span>
+                    <input type="text" maxlength="20" required="required" class="form-control ">
+                </div>
+            </div>
+            <div class="input_con">
+                <div class="input-group">
+                    <span class="input-group-addon">密码</span>
+                    <input type="password" maxlength="20" required="required" class="form-control ">
+                </div>
+            </div>
+            <div class="input_con">
+                <div class="input-group">
+                    <span class="input-group-addon">确认密码</span>
+                    <input type="password" maxlength="20" required="required" class="form-control ">
+                </div>
+            </div>
+            <div class="input_con">
+                <div class="input-group">
+                    <span class="input-group-addon">邮箱</span>
+                    <input type="email" required="required" class="form-control ">
+                </div>
+            </div>
+            <div class="input_con">
+                <div class="input-group">
+                    <span class="input-group-addon">电话</span>
+                    <input type="tel" required="required" class="form-control ">
+                </div>
+            </div>
+            <div class="input_con">
+                <input class="btn col-xs-12 btn-primary" type="submit" value="注册">
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+<!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<script src="/resources/js/jquery1.11.0.js"></script>
+<script src="/resources/plugins/bootstrap/js/bootstrap.js"></script>
+<script src="/resources/plugins/easyui/jquery.easyui.min.js"></script>
+<script>
+    $(function () {
+
+        $('#loginBtn').bind('click', function () {
+            $('#login_form').form({
+                success:function(data){
+                    data=JSON.parse(data);
+                    if(data.retcode=='000000'){
+                        window.location.href='/html/main.html';
+                    }else{
+                        $.messager.alert('Info', data.retinfo, 'info');
+                    }
+                }
+            });
+        });
+
+        $('#close_registor').bind('click', function () {
+            closeRegistor();
+        });
+        $('#goto_registor').bind('click', function () {
+            openRegistor();
+        });
+
+            $("#login_form").submit(function(e){
+                console.info(e);
+            });
+
+
+    });
+
+    function closeRegistor() {
+        $('.register_con').animate({
+            'opacity': 0,
+            'height': "0px"
+        }).animate({
+            'width': '0px'
+        }, 100);
+    }
+    function openRegistor() {
+        $('.register_con').animate({
+            'width': '100%'
+        }).animate({
+            'opacity': 1,
+            'height': "100%"
+        });
+    }
+</script>
+</html>

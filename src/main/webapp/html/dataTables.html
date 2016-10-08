@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head lang="zh-cn">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dataTables Test</title>
+
+    <link rel="stylesheet" type="text/css" href="../resources/plugins/bootstrap/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../resources/plugins/datatables/datatables.min.css"/>
+    <link rel="stylesheet" type="text/css" media="all" href="../resources/plugins/fileupload/css/fileinput.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../resources/plugins/fileupload/css/default.css"/>
+    <script language="JavaScript" type="text/javascript"
+            src="../resources/plugins/datatables/media/js/jquery.js"></script>
+    <script language="JavaScript" type="text/javascript" src="../resources/js/common.js"></script>
+    <script language="JavaScript" type="text/javascript"
+            src="../resources/plugins/datatables/datatables.min.js"></script>
+    <script language="JavaScript" type="text/javascript"
+            src="../resources/plugins/fileupload/js/canvas-to-blob.min.js"></script>
+    <script language="JavaScript" type="text/javascript"
+            src="../resources/plugins/fileupload/js/fileinput.min.js"></script>
+    <script language="JavaScript" type="text/javascript"
+            src="../resources/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script language="JavaScript" type="text/javascript"
+            src="../resources/plugins/fileupload/js/fileinput_locale_zh.js"></script>
+
+</head>
+<body>
+<div style="width: 50%;margin-top: 20px">
+    <input type="file" id="input-id" name="file"/>
+    <label id="successLabel" style="color: green"></label>
+</div>
+<div style="margin-top: 5px">
+    <table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>业务主键</th>
+            <th>业务类型</th>
+            <th>状态</th>
+            <th>返回消息</th>
+            <th>录入时间</th>
+            <th>修改时间</th>
+        </tr>
+        </thead>
+        <!--<tbody></tbody>-->
+    </table>
+</div>
+</body>
+
+<script>
+    $(document).ready(function () {
+
+        $("#input-id").fileinput({
+            showPreview: false,
+            uploadUrl: getContextPath() + '/upload', // server upload action
+            uploadAsync: true
+        });
+
+        $('#input-id').on('filebatchuploadsuccess', function (event, data, previewId, index, response) {
+            $("#successLabel").html("上传成功");
+        });
+
+        var columns = [
+            {"data": "id", "orderable": false},
+            {"data": "businessKey", "orderable": false},
+            {"data": "businessType", "orderable": false},
+            {"data": "processStatus", "orderable": false},
+            {"data": "returnMsg", "orderable": false},
+            {"data": "enterTime", "orderable": false},
+            {"data": "modifyTime", "orderable": false}
+        ];
+        initDataTables('example', columns, '/get-data');
+    });
+</script>
+
+</html>

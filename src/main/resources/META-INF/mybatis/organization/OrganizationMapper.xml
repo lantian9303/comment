@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yeww.carbao.dao.organization.OrganizationMapper">
+
+    <resultMap id="BaseResultMap" type="com.yeww.carbao.model.organization.OrganizationEntity">
+        <id column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="pid" property="pid"/>
+        <result column="leaf" property="leaf"/>
+        <result column="valid_sign" property="validSign"/>
+        <result column="create_time" property="createTime"/>
+        <result column="modify_time" property="modifyTime"/>
+    </resultMap>
+
+    <select id="selectById" resultMap="BaseResultMap" parameterType="long">
+        SELECT * FROM t_organization where id=#{id}
+    </select>
+
+    <select id="selectByPid" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT * FROM t_organization where pid=#{pid} and valid_sign=1
+    </select>
+
+    <update id="update" parameterType="com.yeww.carbao.model.organization.OrganizationEntity">
+        UPDATE t_organization
+        <set>
+            <if test="code!=null">
+                code=#{code},
+            </if>
+            <if test="name!=null">
+                name=#{name},
+            </if>
+            <if test="pid!=null">
+                pid=#{pid},
+            </if>
+            <if test="leaf!=null">
+                leaf=#{leaf},
+            </if>
+            <if test="validSign!=null">
+                valid_sign=#{validSign},
+            </if>
+        </set>
+        <where>
+            id=#{id}
+        </where>
+    </update>
+
+    <insert id="insert" parameterType="com.yeww.carbao.model.organization.OrganizationEntity">
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO t_organization
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="code != null">
+                code,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="pid != null">
+                pid,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="modifyTime != null">
+                modify_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="code != null">
+                #{code},
+            </if>
+            <if test="name != null">
+                #{name},
+            </if>
+            <if test="pid != null">
+                #{pid},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="modifyTime != null">
+                #{modifyTime},
+            </if>
+        </trim>
+    </insert>
+</mapper>

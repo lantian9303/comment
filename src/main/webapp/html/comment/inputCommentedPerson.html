@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head lang="zh-cn">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>录入待评论人</title>
+
+    <link rel="stylesheet" type="text/css" href="../../resources/plugins/bootstrap/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../../resources/plugins/datatables/datatables.min.css"/>
+    <link rel="stylesheet" type="text/css" media="all" href="../../resources/plugins/fileupload/css/fileinput.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../../resources/plugins/fileupload/css/default.css"/>
+    <script language="JavaScript" type="text/javascript"
+            src="../../resources/plugins/datatables/media/js/jquery.js"></script>
+    <script language="JavaScript" type="text/javascript" src="../../resources/js/common.js"></script>
+    <script language="JavaScript" type="text/javascript"
+            src="../../resources/plugins/datatables/datatables.min.js"></script>
+    <script language="JavaScript" type="text/javascript"
+            src="../../resources/plugins/fileupload/js/canvas-to-blob.min.js"></script>
+    <script language="JavaScript" type="text/javascript"
+            src="../../resources/plugins/fileupload/js/fileinput.min.js"></script>
+    <script language="JavaScript" type="text/javascript"
+            src="../../resources/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script language="JavaScript" type="text/javascript"
+            src="../../resources/plugins/fileupload/js/fileinput_locale_zh.js"></script>
+
+</head>
+<body>
+<div style="margin-top: 5px">
+    <button id="addRow">添加新记录</button>
+    <table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>待评人编号</th>
+            <th>待评人姓名</th>
+            <th>录入时间</th>
+            <th>修改时间</th>
+            <th>录入人编号</th>
+            <th>修改人编号</th>
+        </tr>
+        </thead>
+        <!--<tbody></tbody>-->
+    </table>
+</div>
+</body>
+<script>
+    $(document).ready(function () {
+        var columns = [
+            {"data": "id", "orderable": false},
+            {"data": "commentedPersonCode", "orderable": false},
+            {"data": "commentedPersonName", "orderable": false},
+            {"data": "enterTimeStr", "orderable": false},
+            {"data": "modifyTimeStr", "orderable": false},
+            {"data": "enterUser", "orderable": false},
+            {"data": "modifyUser", "orderable": false}
+        ];
+        var t =initDataTables('example', columns, '/commented/get-list');
+    });
+</script>
+</html>
