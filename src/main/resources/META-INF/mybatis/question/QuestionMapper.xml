@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yeww.carbao.dao.question.QuestionMapper">
+
+    <resultMap id="BaseResultMap" type="com.yeww.carbao.model.question.QuestionEntity">
+        <id column="id" property="id"/>
+        <result column="score" property="score"/>
+        <result column="title" property="title"/>
+        <result column="num" property="num"/>
+        <result column="eval_id" property="evalId"/>
+        <result column="item_num" property="itemNum"/>
+        <result column="valid_sign" property="validSign"/>
+        <result column="create_time" property="createTime"/>
+        <result column="modify_time" property="modifyTime"/>
+    </resultMap>
+
+   <resultMap id="QuestResultMap" extends="BaseResultMap" type="com.yeww.carbao.model.question.QuestionEntity">
+       <association property="evaluationEntity" column="eval_id"
+                    select="com.yeww.carbao.dao.evaluation.EvaluationMapper.selectById">
+
+       </association>
+   </resultMap>
+
+    <select id="queryQuestList" parameterType="map" resultMap="QuestResultMap">
+        SELECT  e.*
+        FROM t_question e
+        WHERE 1=1
+        order by e.modify_time desc
+        <if test="start != null and rows!=null">
+            LIMIT #{start}, #{rows}
+        </if>
+    </select>
+
+    <select id="queryQuestListCount" parameterType="map" resultType="java.lang.Integer">
+        SELECT  count(e.id)
+        FROM t_question e
+        WHERE 1=1
+        order by e.modify_time desc
+        <if test="start != null and rows!=null">
+            LIMIT #{start}, #{rows}
+        </if>
+    </select>
+
+    <select id="selectById" resultMap="QuestResultMap" parameterType="long">
+        SELECT * FROM t_question where id=#{id}
+    </select>
+
+    <update id="update" parameterType="com.yeww.carbao.model.question.QuestionEntity">
+        UPDATE t_question
+        <set>
+            <if test="score!=null">
+                score=#{score},
+            </if>
+            <if test="title!=null">
+                title=#{title},
+            </if>
+            <if test="num!=null">
+                num=#{num},
+            </if>
+            <if test="evalId!=null">
+                eval_id=#{evalId},
+            </if>
+            <if test="itemNum!=null">
+                item_num=#{itemNum},
+            </if>
+            <if test="validSign!=null">
+                valid_sign=#{validSign},
+            </if>
+        </set>
+        <where>
+            id=#{id}
+        </where>
+    </update>
+
+    <insert id="insert" parameterType="com.yeww.carbao.model.question.QuestionEntity">
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO t_question
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="score != null">
+                score,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="num != null">
+                num,
+            </if>
+            <if test="evalId != null">
+                eval_id,
+            </if>
+            <if test="itemNum != null">
+                item_num,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="modifyTime != null">
+                modify_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="score != null">
+                #{score},
+            </if>
+            <if test="title != null">
+                #{title},
+            </if>
+            <if test="num != null">
+                #{num},
+            </if>
+            <if test="evalId != null">
+                #{evalId},
+            </if>
+            <if test="itemNum != null">
+                #{itemNum},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="modifyTime != null">
+                #{modifyTime},
+            </if>
+        </trim>
+    </insert>
+</mapper>

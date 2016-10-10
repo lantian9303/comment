@@ -9,30 +9,19 @@
     <link rel="stylesheet" href="/resources/plugins/easyui/themes/default/easyui.css"/>
 </head>
 <body>
-<div class="easyui-layout" id="employee_layout" data-options="fit:true">
-    <div data-options="region:'center',split:true,fit:true" title="人员列表">
+<div class="easyui-layout" id="eval_layout" data-options="fit:true">
+    <div data-options="region:'center',split:true,fit:true" title="评测列表">
         <div class="easyui-panel" data-options="fit:true" style="padding:5px">
-            <table id="dg_employee" align="center">
+            <table id="dg_eval" align="center">
 
             </table>
         </div>
     </div>
     <div data-options="region:'east',collapsed:true,split:true" title="操作" style="width:40%;padding: 10px;">
-        <form id="saveOrgForm" method="post">
-            <div>
-                部门：<input id="cc" name="orgId" style="margin-left: 20px">
-            </div>
+        <form id="saveEvalForm" method="post">
             <div style="margin-top: 20px">
-                <input class="easyui-textbox" id="employee_code" name="code"
-                       data-options="label:'工号：',required: true,width:300">
-            </div>
-            <div style="margin-top: 20px">
-                <input class="easyui-textbox" id="employee_name" name="name"
-                       data-options="label:'姓名：',required: true,width:300">
-            </div>
-            <div style="margin-top: 20px">
-                <input class="easyui-textbox" id="employee_email" name="email"
-                       data-options="label:'邮箱：',required: true,validType:['email','length[0,40]'],width:300">
+                <input class="easyui-textbox" id="eval_name" name="name"
+                       data-options="label:'评测名称：',required: true,width:300">
             </div>
             <div style="margin-top: 20px">
                 <a id="btn" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-save'"
@@ -48,13 +37,9 @@
 <script src="/resources/js/jquery1.11.0.js"></script>
 <script src="/resources/plugins/easyui/jquery.easyui.min.js"></script>
 <script>
-    $('#cc').combotree({
-        url: '/comment/org/combo-tree',
-        required: true
-    });
 
-    $('#dg_employee').datagrid({
-        url: "/comment/employee/query-list",
+    $('#dg_eval').datagrid({
+        url: "/comment/eval/query-list",
         method: "post",
         fitColumns: "false",
         fit: true,
@@ -70,34 +55,39 @@
         columns: [
             [
                 {
-                    field: 'code', width: 30, title: '工号', align: 'center'
+                    field: 'id', width: 30, title: '序号', align: 'center'
                 },
                 {
                     field: 'name', width: 30, title: '姓名', align: 'center'
                 },
                 {
-                    field: 'email', width: 50, title: '邮箱', align: 'center'
+                    field: 'score', width: 50, title: '题目总分', align: 'center'
                 },
                 {
-                    field: 'orgCode', width: 30, title: '部门代码', align: 'center'
+                    field: 'state', width: 50, title: '状态', align: 'center',
+                    formatter: function (value, row, index) {
+                        if(value==0){
+                            return "新建"
+                        }
+                    }
                 },
                 {
-                    field: 'orgName', width: 80, title: '部门名称', align: 'center'
+                    field: 'questNum', width: 30, title: '总题目数', align: 'center'
                 },
                 {
                     field: 'validSign', width: 30, title: '是否删除', align: 'center',
                     formatter: function (value, row, index) {
                         if (value == 1) {
-                            return '在岗';
+                            return '有效';
                         } else if (value == 0) {
-                            return '离职';
+                            return '删除';
                         } else {
                             return '';
                         }
                     }
                 },
                 {
-                    field: 'enterTimeStr',
+                    field: 'createTimeStr',
                     width: 50,
                     title: '录入时间',
                     align: 'center'
@@ -115,7 +105,7 @@
                 text: '新增',
                 iconCls: 'icon-add',
                 handler: function () {
-                    $('#employee_layout').layout('expand', 'east');
+                    $('#eval_layout').layout('expand', 'east');
                 }
             },
             '-',
@@ -123,20 +113,25 @@
                 text: '删除',
                 iconCls: 'icon-remove',
                 handler: function () {
-                    var node = $('#dg_employee').datagrid('getSelected');
+                    var node = $('#dg_eval').datagrid('getSelected');
                     if (node == null) {
-                        $.messager.alert('警告', '选择需要删除的员工', 'warning');
+                        $.messager.alert('警告', '选择需要删除的记录', 'warning');
+                        return false;
                     }
-                    $.messager.confirm('Confirm', '确定删除该员工吗?', function (r) {
+                    if(node.state==1){
+                        $.messager.alert('警告', '该评测已经发布，不能删除', 'warning');
+                        return false;
+                    }
+                    $.messager.confirm('Confirm', '确定删除该记录吗?', function (r) {
                         if (r) {
                             $.ajax({
-                                url:'/comment/employee/delete',
-                                data:{
-                                    id:node.id
+                                url: '/comment/eval/delete',
+                                data: {
+                                    id: node.id
                                 },
                                 success: function (data) {
                                     if (data.retcode == '000000') {
-                                        $('#dg_employee').datagrid('reload');
+                                        $('#dg_eval').datagrid('reload');
                                         $.messager.alert('提示', '操作成功', 'info');
                                     } else {
                                         $.messager.alert('错误', '操作失败', 'error');
@@ -146,6 +141,14 @@
                         }
                     });
                 }
+            },
+            '-',
+            {
+                text: '发布',
+                iconCls: 'icon-redo',
+                handler: function () {
+
+                }
             }
         ]
     });
@@ -153,8 +156,8 @@
     function saveForm() {
         $.messager.confirm('Confirm', '确定添加吗?', function (r) {
             if (r) {
-                $('#saveOrgForm').form('submit', {
-                            url: '/comment/employee/save',
+                $('#saveEvalForm').form('submit', {
+                            url: '/comment/eval/save',
                             onSubmit: function () {
                                 var isValid = $(this).form('validate');
                                 if (!isValid) {
@@ -164,7 +167,7 @@
                             success: function (data) {
                                 data = JSON.parse(data);
                                 if (data.retcode == '000000') {
-                                    $('#dg_employee').datagrid('reload');
+                                    $('#dg_eval').datagrid('reload');
                                     $.messager.alert('提示', '操作成功', 'info');
                                 } else {
                                     $.messager.alert('错误', data.retinfo, 'error');
@@ -174,8 +177,6 @@
                 );
             }
         });
-
     }
-
 </script>
 </html>

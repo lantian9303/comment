@@ -9,30 +9,30 @@
     <link rel="stylesheet" href="/resources/plugins/easyui/themes/default/easyui.css"/>
 </head>
 <body>
-<div class="easyui-layout" id="employee_layout" data-options="fit:true">
-    <div data-options="region:'center',split:true,fit:true" title="人员列表">
+<div class="easyui-layout" id="quest_layout" data-options="fit:true">
+    <div data-options="region:'center',split:true,fit:true" title="题库列表">
         <div class="easyui-panel" data-options="fit:true" style="padding:5px">
-            <table id="dg_employee" align="center">
+            <table id="dg_quest" align="center">
 
             </table>
         </div>
     </div>
     <div data-options="region:'east',collapsed:true,split:true" title="操作" style="width:40%;padding: 10px;">
-        <form id="saveOrgForm" method="post">
+        <form id="saveQuestForm" method="post">
             <div>
-                部门：<input id="cc" name="orgId" style="margin-left: 20px">
+                评测期：<input id="cc" name="eval_id" style="margin-left: 20px">
             </div>
             <div style="margin-top: 20px">
-                <input class="easyui-textbox" id="employee_code" name="code"
-                       data-options="label:'工号：',required: true,width:300">
+                <input class="easyui-textbox" id="quest_num" name="num"
+                       data-options="label:'题号：',required: true,width:300">
             </div>
             <div style="margin-top: 20px">
-                <input class="easyui-textbox" id="employee_name" name="name"
-                       data-options="label:'姓名：',required: true,width:300">
+                <input class="easyui-textbox" id="quest_title" name="title"
+                       data-options="label:'题目描述：',required: true,width:300">
             </div>
             <div style="margin-top: 20px">
-                <input class="easyui-textbox" id="employee_email" name="email"
-                       data-options="label:'邮箱：',required: true,validType:['email','length[0,40]'],width:300">
+                <input class="easyui-textbox" id="quest_score" name="score"
+                       data-options="label:'题目分值：',required: true,width:300">
             </div>
             <div style="margin-top: 20px">
                 <a id="btn" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-save'"
@@ -48,13 +48,19 @@
 <script src="/resources/js/jquery1.11.0.js"></script>
 <script src="/resources/plugins/easyui/jquery.easyui.min.js"></script>
 <script>
-    $('#cc').combotree({
-        url: '/comment/org/combo-tree',
+    $('#cc').combobox({
+        url: '/comment/eval/query-combox-list',
+        queryParams: {
+            validSign: 1,
+            state: 0
+        },
+        valueField: 'id',
+        textField: 'name',
         required: true
     });
 
-    $('#dg_employee').datagrid({
-        url: "/comment/employee/query-list",
+    $('#dg_quest').datagrid({
+        url: "/comment/quest/query-list",
         method: "post",
         fitColumns: "false",
         fit: true,
@@ -70,34 +76,43 @@
         columns: [
             [
                 {
-                    field: 'code', width: 30, title: '工号', align: 'center'
+                    field: 'evalId', width: 30, title: '评测期id', align: 'center',
+                    formatter: function (value, row, index) {
+                        return row.evaluationEntity.id;
+                    }
                 },
                 {
-                    field: 'name', width: 30, title: '姓名', align: 'center'
+                    field: 'evalName', width: 30, title: '评测期名称', align: 'center',
+                    formatter: function (value, row, index) {
+                        return row.evaluationEntity.name;
+                    }
                 },
                 {
-                    field: 'email', width: 50, title: '邮箱', align: 'center'
+                    field: 'num', width: 30, title: '题号', align: 'center'
                 },
                 {
-                    field: 'orgCode', width: 30, title: '部门代码', align: 'center'
+                    field: 'title', width: 50, title: '题目描述', align: 'center'
                 },
                 {
-                    field: 'orgName', width: 80, title: '部门名称', align: 'center'
+                    field: 'score', width: 30, title: '题目总分', align: 'center'
+                },
+                {
+                    field: 'itemNum', width: 30, title: '选项数目', align: 'center'
                 },
                 {
                     field: 'validSign', width: 30, title: '是否删除', align: 'center',
                     formatter: function (value, row, index) {
                         if (value == 1) {
-                            return '在岗';
+                            return '有效';
                         } else if (value == 0) {
-                            return '离职';
+                            return '无效';
                         } else {
                             return '';
                         }
                     }
                 },
                 {
-                    field: 'enterTimeStr',
+                    field: 'createTimeStr',
                     width: 50,
                     title: '录入时间',
                     align: 'center'
@@ -115,7 +130,7 @@
                 text: '新增',
                 iconCls: 'icon-add',
                 handler: function () {
-                    $('#employee_layout').layout('expand', 'east');
+                    $('#quest_layout').layout('expand', 'east');
                 }
             },
             '-',
@@ -123,20 +138,20 @@
                 text: '删除',
                 iconCls: 'icon-remove',
                 handler: function () {
-                    var node = $('#dg_employee').datagrid('getSelected');
+                    var node = $('#dg_quest').datagrid('getSelected');
                     if (node == null) {
                         $.messager.alert('警告', '选择需要删除的员工', 'warning');
                     }
                     $.messager.confirm('Confirm', '确定删除该员工吗?', function (r) {
                         if (r) {
                             $.ajax({
-                                url:'/comment/employee/delete',
-                                data:{
-                                    id:node.id
+                                url: '/comment/quest/delete',
+                                data: {
+                                    id: node.id
                                 },
                                 success: function (data) {
                                     if (data.retcode == '000000') {
-                                        $('#dg_employee').datagrid('reload');
+                                        $('#dg_quest').datagrid('reload');
                                         $.messager.alert('提示', '操作成功', 'info');
                                     } else {
                                         $.messager.alert('错误', '操作失败', 'error');
@@ -153,8 +168,8 @@
     function saveForm() {
         $.messager.confirm('Confirm', '确定添加吗?', function (r) {
             if (r) {
-                $('#saveOrgForm').form('submit', {
-                            url: '/comment/employee/save',
+                $('#saveQuestForm').form('submit', {
+                            url: '/comment/quest/save',
                             onSubmit: function () {
                                 var isValid = $(this).form('validate');
                                 if (!isValid) {
@@ -164,7 +179,7 @@
                             success: function (data) {
                                 data = JSON.parse(data);
                                 if (data.retcode == '000000') {
-                                    $('#dg_employee').datagrid('reload');
+                                    $('#dg_quest').datagrid('reload');
                                     $.messager.alert('提示', '操作成功', 'info');
                                 } else {
                                     $.messager.alert('错误', data.retinfo, 'error');
@@ -176,6 +191,5 @@
         });
 
     }
-
 </script>
 </html>
